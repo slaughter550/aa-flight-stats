@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title></title>
+        <style>
+            body {
+                color: #5BABD1;
+                background-color: #242424;
+                font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            }
+
+            #container {
+                font-size: 50px;
+                width: 500px;
+                margin: 150px auto;
+            }
+
+            #container #stats {
+                margin: 0px auto;
+                width: 300px;
+            }
+
+            h2 {
+                text-align: center;
+            }
+
+            #destination {
+                margin: -50px 0px 75px 0px;
+                text-align: center;
+            }
+
+            data {
+                font-size: 40px;
+                margin: 4px 0px;
+            }
+
+            sm {
+                font-size: 28px;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="container">
+            <h2>Flight Stats</h2>
+            <div id="destination"><data id="from"></data> &rarr; <data id="to"></data></div>
+
+            <div id="stats">
+                <div><data id="distance"></data> <sm>miles remaining</sm></div>
+                <div><data id="speed"></data> <sm>mph</sm></div>
+                <div><data id="time"></data> <sm>minutes left</sm></div>
+            </div>
+        </div>
+
+        <script>
+            var xmlhttp = new XMLHttpRequest();
+            var url = "http://services.inflightpanasonic.aero/inflight/services/flightdata/v1/flightdata";
+
+            xmlhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    var data = JSON.parse(this.responseText);
+                    document.getElementById("from").innerHTML = data.td_id_fltdata_departure_baggage_id;
+                    document.getElementById("to").innerHTML = data.td_id_fltdata_destination_baggage_id;
+
+
+                    document.getElementById("distance").innerHTML = parseInt(data.td_id_fltdata_distance_to_destination);
+                    document.getElementById("speed").innerHTML = parseInt(data.td_id_fltdata_ground_speed);
+                    document.getElementById("time").innerHTML = parseInt(data.td_id_fltdata_time_to_destination);
+                }
+            };
+
+            var getData = () => {
+                xmlhttp.open("GET", url, true);
+                xmlhttp.send();
+            };
+
+            getData();
+            setInterval(getData, 1000)
+        </script>
+    </body>
+</html>
